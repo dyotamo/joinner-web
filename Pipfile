@@ -12,6 +12,7 @@ apscheduler = "*"
 flask = "*"
 flask-sqlalchemy = "*"
 flask-minify = "*"
+gunicorn = "*"
 
 [requires]
 python_version = "3.6"

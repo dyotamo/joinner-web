@@ -1,4 +1,5 @@
 from logging import info, basicConfig, INFO
+from os import environ
 
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
@@ -15,7 +16,8 @@ basicConfig(format="%(asctime)s\t- %(levelname)s\t- %(message)s", level=INFO)
 app = Flask(__name__)
 
 # TODO production db
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///dev.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = environ.get(
+    "DATABASE_URL") or "sqlite:///dev.db"
 db = SQLAlchemy(app)
 mn = minify(app)
 
