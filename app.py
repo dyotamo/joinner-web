@@ -129,7 +129,7 @@ def scrape_cartamz():
 
 
 sched = BackgroundScheduler(daemon=True)
-sched.add_job(scrape_all, "interval", hours=1)
+sched.add_job(scrape_all, "interval", minutes=10)
 sched.start()
 
 # Web interface errors handlers
