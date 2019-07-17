@@ -125,10 +125,10 @@ def server_error(e):
     return jsonify({"error": "internal server error"}), 500
 
 
-if __name__ == "__main__":
-    sched = BackgroundScheduler(daemon=True)
-    sched.add_job(scrape_all, "interval", minutes=10)
-    sched.start()
+sched = BackgroundScheduler(daemon=True)
+sched.add_job(scrape_all, "interval", minutes=10)
+sched.start()
 
+if __name__ == "__main__":
     # TODO production config
     app.run(debug=True)
