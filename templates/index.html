@@ -12,7 +12,7 @@
     <title>Agregador de Notícias!</title>
 </head>
 
-<body class="container" style="margin-top: 20px;">
+<body class="container" style="margin-top: 20px; line-height: 1.7;">
     <div>
         <div class="row">
             {% for category in categories %}
@@ -26,7 +26,8 @@
                         </li>
                         {% endfor %}
                         <hr>
-                        <li><a href="{{url_for('by_category', slug=category.slug)}}">Mais sobre {{ category.name }}...</a></li>
+                        <li><a href="{{url_for('by_category', slug=category.slug)}}">Mais sobre
+                                {{ category.name }}...</a></li>
                     </ul>
                 </div>
             </div>
