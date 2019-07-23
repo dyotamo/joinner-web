@@ -16,7 +16,7 @@
     <div class="card shadow-lg p-3 mb-5 bg-white rounded" style="margin-bottom: 10px;">
         <h3>{{ category.name }}! <small><a href="{{ url_for('index') }}">(Voltar)</a></small></h3>
         <ul class="card-body" style="padding-left: 40px;">
-            {% for new in category.news %}
+            {% for new in category.news[::-1] %}
             <li style="list-style-type: square;">
                 <a href="{{ new.url }}" target="_blank">{{ new.title }}</a>
             </li>

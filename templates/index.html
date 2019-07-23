@@ -20,7 +20,7 @@
                 <div class="card shadow-lg p-3 mb-5 bg-white rounded" style="margin-bottom: 10px;">
                     <h3>{{ category.name }}</h3>
                     <ul class="card-body" style="padding-left: 40px;">
-                        {% for new in category.news[0:4] %}
+                        {% for new in category.news[::-1][:4] %}
                         <li style="list-style-type: square;">
                             <a href="{{ new.url }}" target="_blank">{{ new.title }}</a>
                         </li>
