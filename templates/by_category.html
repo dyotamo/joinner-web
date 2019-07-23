@@ -8,17 +8,19 @@
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/lux/bootstrap.min.css"
         crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+
 
     <title>{{ category.name }}!</title>
 </head>
 
-<body class="container" style="margin-top: 20px; line-height: 1.7;">
+<body class="container" style="margin-top: 20px; line-height: 1.7; font-family: Roboto, sans-serif;">
     <div class="card shadow-lg p-3 mb-5 bg-white rounded" style="margin-bottom: 10px;">
         <h3>{{ category.name }}! <small><a href="{{ url_for('index') }}">(Voltar)</a></small></h3>
         <ul class="card-body" style="padding-left: 40px;">
             {% for new in category.news[::-1] %}
             <li style="list-style-type: square;">
-                <a href="{{ new.url }}" target="_blank">{{ new.title }}</a>
+                <a href="{{ new.url }}" target="_blank">{{ new.title }} - {{ new.date|humanize() }}</a>
             </li>
             {% endfor %}
         </ul>

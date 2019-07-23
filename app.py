@@ -10,6 +10,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, render_template, jsonify
 from flask_minify import minify
+from flask_humanize import Humanize
 
 from slugify import slugify
 
@@ -20,8 +21,14 @@ app = Flask(__name__)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = environ.get(
     "DATABASE_URL") or "sqlite:///dev.db"
+
 db = SQLAlchemy(app)
 mn = minify(app)
+hz = Humanize(app)
+
+@hz.localeselector
+def get_locale():
+    return 'pt_BR'
 
 
 # Models
