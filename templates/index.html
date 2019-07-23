@@ -23,7 +23,7 @@
                     <ul class="card-body" style="padding-left: 40px;">
                         {% for new in category.news[::-1][:4] %}
                         <li style="list-style-type: square;">
-                            <a href="{{ new.url }}" target="_blank">{{ new.title }} - {{ new.date|humanize() }}</a>
+                            <a href="{{ new.url }}" target="_blank" title="{{ new.title }}">{{ new.title|truncate(48) }} - {{ new.date|humanize() }}</a>
                         </li>
                         {% endfor %}
                         <hr>

@@ -26,6 +26,7 @@ db = SQLAlchemy(app)
 mn = minify(app)
 hz = Humanize(app)
 
+
 @hz.localeselector
 def get_locale():
     return 'pt_BR'
