@@ -4,6 +4,7 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+rope = "*"
 
 [packages]
 beautifulsoup4 = "*"
@@ -17,6 +18,7 @@ psycopg2 = "*"
 psycopg2-binary = "*"
 python-slugify = "*"
 flask-humanize = "*"
+flask-dotenv = "*"
 
 [requires]
 python_version = "3.6"

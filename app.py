@@ -8,9 +8,10 @@ from bs4 import BeautifulSoup
 from apscheduler.schedulers.background import BackgroundScheduler
 
 from flask_sqlalchemy import SQLAlchemy
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, request
 from flask_minify import minify
 from flask_humanize import Humanize
+from flask_dotenv import DotEnv
 
 from slugify import slugify
 
@@ -25,11 +26,15 @@ app.config["SQLALCHEMY_DATABASE_URI"] = environ.get(
 db = SQLAlchemy(app)
 mn = minify(app)
 hz = Humanize(app)
+env = DotEnv(app)
+
+app.config["TELERIVET_API_KEY"] = environ["TELERIVET_API_KEY"]
+app.config["WEBHOOK_SECRET"] = environ["WEBHOOK_SECRET"]
 
 
 @hz.localeselector
 def get_locale():
-    return 'pt_BR'
+    return "pt_BR"
 
 
 # Models
@@ -58,6 +63,13 @@ class New(db.Model):
         return "<New {}>".format(self.title)
 
 
+class Contact(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    number = db.Column(db.String(255), unique=True, nullable=False)
+
+    def __repr__(self):
+        return "<Contact {}>".format(self.number)
+
 # Views
 @app.route("/", methods=["GET"])
 def index():
@@ -69,8 +81,43 @@ def by_category(slug):
     category = Category.query.filter_by(slug=slug).first_or_404()
     return render_template("by_category.html", category=category)
 
+# Webhook
+@app.route("/webhook", methods=["POST"])
+def subscription_listener():
+    webhook_secret = app.config["WEBHOOK_SECRET"]
+
+    if request.form.get("secret") != webhook_secret:
+        return jsonify(dict(error="Invalid webhook secret")), 403
+
+    if request.form.get("event") == "incoming_message":
+        content = request.form.get("content")
+        from_number = request.form.get("from_number")
+
+        if content is None:
+            return jsonify({"messages": [{"content": "Formato inválido. Utilize IN para se subscrever ou OUT para sair da lista de subscrição."}]})
+
+        if content.lower() == "in":
+            contact = Contact.query.filter_by(number=from_number).first()
+            if contact is not None:
+                return jsonify({"messages": [{"content": contact.number + " já existe a lista de subscrição."}]})
+
+            contact = Contact(number=from_number)
+            db.session.add(contact)
+            db.session.commit()
+            return jsonify({"messages": [{"content": contact.number + " foi adicionado a lista de subscrição."}]})
+
+        elif content.lower() == "out":
+            contact = Contact.query.filter_by(number=from_number).first()
+            if contact is not None:
+                db.session.delete(contact)
+                db.session.commit()
+                return jsonify({"messages": [{"content": contact.number + " foi removido da lista de subscrição."}]})
+            return jsonify({"messages": [{"content": from_number + " não existe lista de subscrição."}]})
+        return jsonify({"messages": [{"content": "Formato inválido. Utilize IN para se subscrever ou OUT para sair da lista de subscrição."}]})
+    return jsonify({"messages": [{"content": "Protocol not implemented yet"}]})
 
 # Scrapper
+
 
 def scrape_all():
     scrape_cartamz()
@@ -111,11 +158,23 @@ def scrape_cartamz():
                 date = datetime.strptime(date, "%d-%m-%y")
 
             if New.query.filter_by(title=title).first() is None:
-                category.news.append(
-                    New(title=title, url=DOMAIN + url, date=date, excerpt=excerpt))
+                new = New(title=title, url=DOMAIN + url,
+                          date=date, excerpt=excerpt)
+                category.news.append(new)
+                send_sms(new)
 
         db.session.add(category)
+
+    info("Delivering SMSs ...")
+    send_sms()
     info("Finished scrapper Carta de Moçambique...")
+
+
+def send_sms(new):
+    for contact in Contact.query.all():
+        for new in New.query.filter_by(date=datetime.now().date):
+            pass
+
 
 # Web interface errors handlers
 @app.errorhandler(404)
