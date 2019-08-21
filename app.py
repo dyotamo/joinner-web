@@ -12,6 +12,7 @@ from flask import Flask, render_template, jsonify, request
 from flask_minify import minify
 from flask_humanize import Humanize
 from flask_dotenv import DotEnv
+from flask_turbolinks import turbolinks
 
 from slugify import slugify
 
@@ -19,6 +20,7 @@ from slugify import slugify
 basicConfig(format="%(asctime)s\t- %(levelname)s\t- %(message)s", level=INFO)
 
 app = Flask(__name__)
+turbolinks(app)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = environ.get(
     "DATABASE_URL") or "sqlite:///dev.db"

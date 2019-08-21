@@ -19,6 +19,7 @@ psycopg2-binary = "*"
 python-slugify = "*"
 flask-humanize = "*"
 flask-dotenv = "*"
+flask-turbolinks = "*"
 
 [requires]
 python_version = "3.6"
