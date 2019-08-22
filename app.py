@@ -123,7 +123,6 @@ def subscription_listener():
 
 def scrape_all():
     scrape_cartamz()
-    db.session.commit()
 
 
 def scrape_cartamz():
@@ -166,6 +165,7 @@ def scrape_cartamz():
                 send_sms(new)
 
         db.session.add(category)
+    db.session.commit()
 
     info("Delivering SMSs ...")
     send_sms()
@@ -184,7 +184,7 @@ def page_not_found(e):
 
 @app.errorhandler(405)
 def method_not_allowed(e):
-    return render_template("404.html"), 404
+    return render_template("404.html"), 405
 
 
 @app.errorhandler(500)
