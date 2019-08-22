@@ -173,9 +173,7 @@ def scrape_cartamz():
 
 
 def send_sms(new):
-    for contact in Contact.query.all():
-        for new in New.query.filter_by(date=datetime.now().date):
-            pass
+    pass
 
 
 # Web interface errors handlers
