@@ -18,12 +18,14 @@
 <body class="container" style="margin-top: 20px;">
     <div class="card shadow-lg p-3 mb-5 bg-white rounded" style="margin-bottom: 10px;">
         <h3>{{ category.name }}! <small><a href="{{ url_for('index') }}">(Voltar)</a></small></h3>
-        <ul class="card-body" style="padding-left: 40px;">
+        <ul class="card-body row" style="padding-left: 40px;">
             {% for new in category.news[::-1] %}
-            <li style="list-style-type: square;">
-                <a href="{{ new.url }}" target="_blank" title="{{ new.excerpt }}">{{ new.title }} -
-                    {{ new.date|humanize() }}</a>
-            </li>
+            <div class="col-md-4">
+                <li>
+                    <a href="{{ new.url }}" target="_blank" title="{{ new.excerpt }}">{{ new.title }} -
+                        {{ new.date|humanize() }}</a>
+                </li>
+            </div>
             {% endfor %}
         </ul>
     </div>
