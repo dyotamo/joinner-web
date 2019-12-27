@@ -12,7 +12,7 @@ from flask import Flask, render_template, jsonify, request
 from flask_minify import minify
 from flask_humanize import Humanize
 from flask_dotenv import DotEnv
-from flask_turbolinks import turbolinks
+from flask_restless import APIManager
 
 from slugify import slugify
 
@@ -20,18 +20,16 @@ from slugify import slugify
 basicConfig(format="%(asctime)s\t- %(levelname)s\t- %(message)s", level=INFO)
 
 app = Flask(__name__)
-turbolinks(app)
 
+app.config["TELERIVET_API_KEY"] = environ["TELERIVET_API_KEY"]
+app.config["WEBHOOK_SECRET"] = environ["WEBHOOK_SECRET"]
 app.config["SQLALCHEMY_DATABASE_URI"] = environ.get(
     "DATABASE_URL") or "sqlite:///dev.db"
 
 db = SQLAlchemy(app)
 mn = minify(app)
 hz = Humanize(app)
-env = DotEnv(app)
-
-app.config["TELERIVET_API_KEY"] = environ["TELERIVET_API_KEY"]
-app.config["WEBHOOK_SECRET"] = environ["WEBHOOK_SECRET"]
+ev = DotEnv(app)
 
 
 @hz.localeselector
@@ -166,13 +164,11 @@ def scrape_cartamz():
 
         db.session.add(category)
     db.session.commit()
-
-    info("Delivering SMSs ...")
-    send_sms()
     info("Finished scrapper Carta de Moçambique...")
 
 
 def send_sms(new):
+    # TODO
     pass
 
 
@@ -193,9 +189,13 @@ def server_error(e):
 
 
 sched = BackgroundScheduler(daemon=True)
-sched.add_job(scrape_all, "interval", minutes=10)
+sched.add_job(scrape_all, "interval", hours=1)
 sched.start()
 
+# Create the Flask-Restless API manager.
+manager = APIManager(app, flask_sqlalchemy_db=db)
+manager.create_api(New, methods=['GET'])
+
+
 if __name__ == "__main__":
-    # TODO production config
     app.run(debug=True)
