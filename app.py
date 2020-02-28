@@ -194,7 +194,7 @@ sched.start()
 
 # Create the Flask-Restless API manager.
 manager = APIManager(app, flask_sqlalchemy_db=db)
-manager.create_api(New, methods=['GET'], results_per_page=0)
+manager.create_api(New, methods=['GET'])
 
 
 if __name__ == "__main__":
